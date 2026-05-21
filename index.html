@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        :root {
+            --pink: #ff6b8a;
+            --pink-light: #ffb3c6;
+            --pink-pale: #fff0f3;
+            --rose: #e8576b;
+            --white: #fff;
+            --gold: #f4a460;
+            --text: #5a3e4b;
+            --shadow: 0 10px 40px rgba(255, 107, 138, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #fff0f3 0%, #ffe4e9 25%, #fff0f5 50%, #ffe8ec 75%, #fff0f3 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: var(--text);
+            cursor: default;
+            position: relative;
+        }
+
+        .petals-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .petal {
+            position: absolute;
+            top: -60px;
+            animation: fall linear infinite;
+            opacity: 0.7;
+            font-size: 24px;
+            user-select: none;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-60px) rotate(0deg) translateX(0px); opacity: 0.9; }
+            25% { transform: translateY(25vh) rotate(90deg) translateX(40px); opacity: 0.7; }
+            50% { transform: translateY(50vh) rotate(180deg) translateX(-30px); opacity: 0.6; }
+            75% { transform: translateY(75vh) rotate(270deg) translateX(50px); opacity: 0.4; }
+            100% { transform: translateY(105vh) rotate(360deg) translateX(-20px); opacity: 0; }
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-300px) scale(0.2); opacity: 0; }
+        }
+
+        .main-wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        .hero-card {
+            background: var(--white);
+            border-radius: 28px;
+            padding: 32px 24px 28px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #ffe0e8;
+            margin-bottom: 20px;
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #ffb3c640 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .hero-card::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: -20px;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #ffb3c630 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-icon {
+            font-size: 50px;
+            animation: heartbeat 1.2s ease-in-out infinite;
+            display: inline-block;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes heartbeat {
+            0%,100% { transform: scale(1); }
+            8% { transform: scale(1.25); }
+            16% { transform: scale(1); }
+            24% { transform: scale(1.2); }
+            32% { transform: scale(1); }
+        }
+
+        .hero-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 10px 0 6px;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, #ff6b8a, #e8576b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 2px;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            color: #b08090;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 1px;
+        }
+
+        .hero-names {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #d4687c;
+            margin-top: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .countdown-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 24px 20px;
+            box-shadow: var(--shadow);
+            border: 2px solid #ffe0e8;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .countdown-label {
+            font-size: 0.9rem;
+            color: #c0909b;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+        .countdown-date {
+            font-size: 0.85rem;
+            color: #b08090;
+            margin-bottom: 14px;
+        }
+        .countdown-date span {
+            color: #e8576b;
+            font-weight: 600;
+        }
+
+        .countdown-grid {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .countdown-item {
+            background: linear-gradient(135deg, #fff5f7, #ffe8ee);
+            border-radius: 18px;
+            padding: 14px 10px;
+            min-width: 62px;
+            text-align: center;
+            border: 1.5px solid #ffd4de;
+            transition: transform 0.3s;
+        }
+        .countdown-item:hover { transform: translateY(-3px); }
+        .countdown-num {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e8576b;
+            line-height: 1;
+        }
+        .countdown-unit {
+            font-size: 0.75rem;
+            color: #b08090;
+            margin-top: 4px;
+        }
+
+        .countdown-days-big {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b8a, #e8576b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 4px 0;
+        }
+        .countdown-days-label {
+            font-size: 0.85rem;
+            color: #b08090;
+        }
+
+        /* 520 特别卡片 */
+        .special-520-card {
+            background: linear-gradient(135deg, #fff5f7, #ffe0e8);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 2px solid #ffb3c6;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .special-520-card::before {
+            content: '💝';
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-size: 3rem;
+            opacity: 0.3;
+            transform: rotate(-15deg);
+        }
+        .special-520-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #e8576b;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        .special-520-message {
+            font-size: 1rem;
+            color: #6b4d57;
+            line-height: 1.6;
+        }
+        .special-520-countdown {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #e8576b;
+            margin: 8px 0;
+        }
+
+        .quote-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 24px 20px;
+            box-shadow: var(--shadow);
+            border: 2px solid #ffe0e8;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 8px;
+            left: 20px;
+            font-size: 4rem;
+            color: #ffd4de;
+            font-family: Georgia, serif;
+            line-height: 1;
+            pointer-events: none;
+        }
+        .quote-text {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: #6b4d57;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+            min-height: 50px;
+            transition: opacity 0.5s;
+        }
+        .quote-author {
+            font-size: 0.85rem;
+            color: #c0909b;
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+        }
+        .quote-nav {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 14px;
+            position: relative;
+            z-index: 1;
+        }
+        .quote-btn {
+            background: #fff0f3;
+            border: 1.5px solid #ffd4de;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            font-size: 1rem;
+            cursor: pointer;
+            color: #e8576b;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .quote-btn:hover {
+            background: #ffe0e8;
+            transform: scale(1.08);
+        }
+
+        .gallery-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 2px solid #ffe0e8;
+            margin-bottom: 20px;
+        }
+        .gallery-title {
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #d4687c;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        @media (max-width: 400px) {
+            .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .gallery-item {
+            aspect-ratio: 1 / 1;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            border: 2px solid #ffe0e8;
+            transition: transform 0.3s, box-shadow 0.3s;
+            background: linear-gradient(135deg, #ffe0e8, #fff0f3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .gallery-item:hover {
+            transform: scale(1.04);
+            box-shadow: 0 8px 25px rgba(255, 107, 138, 0.25);
+            border-color: #ffb3c6;
+        }
+        .gallery-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: #e8b4c0;
+            font-size: 0.75rem;
+            text-align: center;
+            padding: 8px;
+        }
+        .gallery-placeholder .icon { font-size: 2rem; }
+
+        .love-btn-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 2px solid #ffe0e8;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .love-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b8a, #e8576b);
+            color: #fff;
+            border: none;
+            padding: 14px 36px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            letter-spacing: 2px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(232, 87, 107, 0.35);
+        }
+        .love-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(232, 87, 107, 0.45);
+        }
+        .love-btn:active { transform: scale(0.96); }
+        .love-counter {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #c0909b;
+        }
+        .love-counter strong {
+            color: #e8576b;
+            font-size: 1.1rem;
+        }
+
+        .floating-heart {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+            font-size: 28px;
+            animation: floatUp 1.5s ease-out forwards;
+        }
+
+        .footer-note {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #c0909b;
+            letter-spacing: 1px;
+            padding: 10px;
+        }
+        .footer-note .heart {
+            color: #e8576b;
+            animation: heartbeat 1.2s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #5a3e4b;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            letter-spacing: 1px;
+            pointer-events: none;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 480px) {
+            .hero-title { font-size: 1.6rem; }
+            .hero-icon { font-size: 40px; }
+            .countdown-num { font-size: 1.5rem; }
+            .countdown-days-big { font-size: 2.2rem; }
+            .countdown-item { min-width: 50px; padding: 10px 6px; }
+            .gallery-grid { gap: 8px; }
+            .gallery-item { border-radius: 12px; }
+            .quote-text { font-size: 1rem; }
+            .special-520-countdown { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="petals-container" id="petalsContainer"></div>
+
+    <div class="main-wrapper">
+
+        <div class="hero-card">
+            <div class="hero-icon">💖</div>
+            <h1 class="hero-title"></h1>
+            <p class="hero-subtitle"></p>
+            <p class="hero-names">大笨蛋 & 戈畅</p>
+        </div>
+
+        <div class="countdown-card">
+            <p class="countdown-label">📅 我们在一起已经</p>
+            <div class="countdown-days-big" id="totalDays">0</div>
+            <div class="countdown-days-label">天</div>
+            <p class="countdown-date" style="margin-top:8px;">
+                从 <span id="anniversaryDate">2026-04-10</span> 开始的故事
+            </p>
+            <div class="countdown-grid">
+                <div class="countdown-item">
+                    <div class="countdown-num" id="countYears">0</div>
+                    <div class="countdown-unit">年</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-num" id="countMonths">0</div>
+                    <div class="countdown-unit">月</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-num" id="countDays">0</div>
+                    <div class="countdown-unit">日</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-num" id="countHours">0</div>
+                    <div class="countdown-unit">时</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-num" id="countMinutes">0</div>
+                    <div class="countdown-unit">分</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-num" id="countSeconds">0</div>
+                    <div class="countdown-unit">秒</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第一个520特别卡片 -->
+        <div class="special-520-card" id="special520Card">
+            <div class="special-520-title">💝 我们的第一个520</div>
+            <div class="special-520-message" id="special520Message">正在计算...</div>
+            <div class="special-520-countdown" id="special520Countdown"></div>
+        </div>
+
+        <div class="quote-card">
+            <p class="quote-text" id="quoteText">在这个世界上，我最喜欢的人就是你。</p>
+            <p class="quote-author" id="quoteAuthor">—— 写给你的第 1 封情书</p>
+            <div class="quote-nav">
+                <button class="quote-btn" id="prevQuote" title="上一句">◀</button>
+                <button class="quote-btn" id="nextQuote" title="下一句">▶</button>
+            </div>
+        </div>
+
+        <div class="gallery-card">
+            <p class="gallery-title">📸 我们的回忆相册</p>
+            <div class="gallery-grid" id="galleryGrid">
+            </div>
+        </div>
+
+        <div class="love-btn-card">
+            <button class="love-btn" id="loveBtn">💗 点我表达爱意 💗</button>
+            <p class="love-counter">你已经表达了 <strong id="loveCount">0</strong> 次爱意</p>
+        </div>
+
+        <div class="footer-note">
+            <p>Made with <span class="heart">❤️</span> by 你的大笨蛋</p>
+            <p style="font-size:0.7rem;margin-top:4px;">每一天都在更爱你一点点 ✨</p>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        (function() {
+            // ============ 自定义设置 ============
+            const ANNIVERSARY_DATE = '2026-04-10';
+            const GIRL_NAME = '戈畅';
+            const BOY_NAME = '大笨蛋';
+            // 图片数量（文件名为 图片1.jpg, 图片2.jpg ... 图片6.jpg）
+            const IMAGE_COUNT = 6;
+            const IMAGE_EXT = '.jpg'; // 如果图片是png格式，改为 '.png'
+            // ==================================
+
+            document.querySelector('.hero-names').textContent = ` ${BOY_NAME} & ${GIRL_NAME} `;
+            document.querySelector('.footer-note p').textContent =
+                `Made with ❤️ by 你的${BOY_NAME} · 专属小窝`;
+            document.getElementById('anniversaryDate').textContent = ANNIVERSARY_DATE;
+
+            // 飘落花瓣
+            const petalsContainer = document.getElementById('petalsContainer');
+            const petalEmojis = ['🌸', '💮', '🌷', '🩷', '💗', '✨', '🫧', '💖', '🌺', '🍃', '💕', '❀'];
+            function createPetal() {
+                const petal = document.createElement('span');
+                petal.classList.add('petal');
+                petal.textContent = petalEmojis[Math.floor(Math.random() * petalEmojis.length)];
+                petal.style.left = Math.random() * 95 + '%';
+                petal.style.fontSize = (14 + Math.random() * 22) + 'px';
+                petal.style.animationDuration = (6 + Math.random() * 10) + 's';
+                petal.style.animationDelay = Math.random() * 5 + 's';
+                petal.style.opacity = (0.3 + Math.random() * 0.5);
+                petalsContainer.appendChild(petal);
+                const duration = parseFloat(petal.style.animationDuration) + parseFloat(petal.style.animationDelay);
+                setTimeout(() => { if (petal.parentNode) petal.parentNode.removeChild(petal); }, duration * 1000 + 500);
+            }
+            for (let i = 0; i < 18; i++) { setTimeout(() => createPetal(), i * 400); }
+            setInterval(() => { if (petalsContainer.children.length < 25) createPetal(); }, 1500);
+
+            // 纪念日倒计时
+            const anniversaryDateObj = new Date(ANNIVERSARY_DATE);
+            anniversaryDateObj.setHours(0, 0, 0, 0);
+            function updateCountdown() {
+                const now = new Date();
+                const diffMs = now - anniversaryDateObj;
+                const diffTotalSeconds = Math.floor(diffMs / 1000);
+                if (diffTotalSeconds < 0) {
+                    document.getElementById('totalDays').textContent = '0';
+                    ['Years','Months','Days','Hours','Minutes','Seconds'].forEach(u => document.getElementById('count'+u).textContent = '0');
+                    return;
+                }
+                const totalDays = Math.floor(diffTotalSeconds / 86400);
+                document.getElementById('totalDays').textContent = totalDays;
+                let remaining = diffTotalSeconds;
+                const years = Math.floor(remaining / (365.25 * 86400)); remaining -= years * 365.25 * 86400;
+                const months = Math.floor(remaining / (30.44 * 86400)); remaining -= months * 30.44 * 86400;
+                const days = Math.floor(remaining / 86400); remaining -= days * 86400;
+                const hours = Math.floor(remaining / 3600); remaining -= hours * 3600;
+                const minutes = Math.floor(remaining / 60);
+                const seconds = remaining - minutes * 60;
+                document.getElementById('countYears').textContent = Math.max(0, years);
+                document.getElementById('countMonths').textContent = Math.max(0, months);
+                document.getElementById('countDays').textContent = Math.max(0, days);
+                document.getElementById('countHours').textContent = Math.max(0, hours);
+                document.getElementById('countMinutes').textContent = Math.max(0, minutes);
+                document.getElementById('countSeconds').textContent = Math.max(0, seconds);
+            }
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+
+            // 第一个520 倒计时/祝福
+            const target520 = new Date('2026-05-20');
+            target520.setHours(0, 0, 0, 0);
+            function update520() {
+                const now = new Date();
+                const diffMs = target520 - now;
+                const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+                const msgEl = document.getElementById('special520Message');
+                const countEl = document.getElementById('special520Countdown');
+                if (diffDays > 0) {
+                    msgEl.textContent = '距离我们的第一个520还有';
+                    countEl.textContent = diffDays + ' 天';
+                } else if (diffDays === 0) {
+                    msgEl.textContent = '🎉 今天就是我们的第一个520！';
+                    countEl.textContent = '我爱你 ❤️';
+                } else {
+                    msgEl.textContent = '我们的第一个520已经过去了';
+                    countEl.textContent = Math.abs(diffDays) + ' 天';
+                }
+            }
+            update520();
+            setInterval(update520, 60000); // 每分钟更新一次
+
+            // 情话
+            const quotes = [
+                { text: '在这个世界上，我最喜欢的人就是你。', author: '—— 写给你的第 1 封情书' },
+                { text: '遇见你，是我这辈子最美丽的意外。', author: '—— 写给你的第 2 封情书' },
+                { text: '我想和你有个家', author: '—— 写给你的第 3 封情书' },
+                { text: '我想和你一起，看遍世间所有的日落。', author: '—— 写给你的第 4 封情书' },
+                { text: '没有什么特别的事，只是想你了。', author: '—— 写给你的第 5 封情书' },
+                { text: '你是我疲惫生活里最温柔的梦想。', author: '—— 写给你的第 6 封情书' },
+                { text: '有你在的每一天，都值得被珍藏。', author: '—— 写给你的第 7 封情书' },
+                { text: '我喜欢你，从一而终，认真且怂。', author: '—— 写给你的第 8 封情书' },
+                { text: '你是我的星辰大海，也是我的柴米油盐。', author: '—— 写给你的第 9 封情书' },
+                { text: '余生很长，只想和你一起慢慢走。', author: '—— 写给你的第 10 封情书' },
+                { text: '戈畅姐姐我这辈子跟定你了。', author: '—— 写给你的第 11 封情书' },
+                { text: '你是我所有温柔和偏爱的原因。', author: '—— 写给你的第 12 封情书' },
+            ];
+            let currentQuoteIndex = 0;
+            const quoteText = document.getElementById('quoteText');
+            const quoteAuthor = document.getElementById('quoteAuthor');
+            function showQuote(index) {
+                if (index < 0) index = quotes.length - 1;
+                if (index >= quotes.length) index = 0;
+                currentQuoteIndex = index;
+                quoteText.style.opacity = '0';
+                setTimeout(() => {
+                    quoteText.textContent = quotes[index].text;
+                    quoteAuthor.textContent = quotes[index].author;
+                    quoteText.style.opacity = '1';
+                }, 250);
+            }
+            document.getElementById('prevQuote').addEventListener('click', () => showQuote(currentQuoteIndex - 1));
+            document.getElementById('nextQuote').addEventListener('click', () => showQuote(currentQuoteIndex + 1));
+            setInterval(() => showQuote(currentQuoteIndex + 1), 8000);
+
+            // 照片画廊 - 使用本地图片文件
+            const galleryGrid = document.getElementById('galleryGrid');
+            function buildGallery() {
+                galleryGrid.innerHTML = '';
+                for (let i = 1; i <= IMAGE_COUNT; i++) {
+                    const div = document.createElement('div');
+                    div.classList.add('gallery-item');
+                    const img = document.createElement('img');
+                    img.src = `图片${i}${IMAGE_EXT}`;
+                    img.alt = `我们的照片 ${i}`;
+                    img.loading = 'lazy';
+                    img.onerror = function() {
+                        // 如果图片加载失败，显示占位符
+                        this.style.display = 'none';
+                        div.innerHTML = `<div class="gallery-placeholder"><span class="icon">📷</span><span>图片${i}</span></div>`;
+                    };
+                    div.appendChild(img);
+                    div.title = `我们的照片 ${i}`;
+                    div.addEventListener('click', () => {
+                        showToast(`📸 这是我们的第 ${i} 张回忆`);
+                    });
+                    galleryGrid.appendChild(div);
+                }
+            }
+            buildGallery();
+
+            // 爱心按钮
+            let loveCount = parseInt(localStorage.getItem('loveCount') || '0');
+            const loveCountEl = document.getElementById('loveCount');
+            loveCountEl.textContent = loveCount;
+            document.getElementById('loveBtn').addEventListener('click', function(e) {
+                loveCount++;
+                loveCountEl.textContent = loveCount;
+                localStorage.setItem('loveCount', loveCount);
+                const heart = document.createElement('span');
+                heart.classList.add('floating-heart');
+                heart.textContent = ['💖','💗','💕','💝','🩷','❤️'][Math.floor(Math.random()*6)];
+                heart.style.left = e.clientX - 14 + 'px';
+                heart.style.top = e.clientY - 14 + 'px';
+                heart.style.fontSize = (22 + Math.random()*20) + 'px';
+                document.body.appendChild(heart);
+                setTimeout(() => { if(heart.parentNode) heart.parentNode.removeChild(heart); }, 1600);
+                const messages = {
+                    1:'💌 第一次表达爱意！好甜蜜~', 10:'🌟 已经10次啦！爱意满满~', 50:'🎉 50次！你是最浪漫的人~',
+                    99:'💍 99次！长长久久~', 100:'👑 100次！你就是爱的王者！', 365:'📅 365次！每天都说爱你~',
+                    520:'💞 520！我爱你！', 999:'✨ 999次！天长地久~', 1314:'💎 1314！一生一世！'
+                };
+                if(messages[loveCount]) setTimeout(() => showToast(messages[loveCount]), 300);
+                else if(loveCount % 100 === 0 && loveCount > 0) setTimeout(() => showToast(`🎈 已经${loveCount}次了！太浪漫了吧~`), 300);
+            });
+
+            // Toast
+            const toastEl = document.getElementById('toast');
+            let toastTimer;
+            function showToast(msg) {
+                clearTimeout(toastTimer);
+                toastEl.textContent = msg;
+                toastEl.classList.add('show');
+                toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+            }
+
+            // 每日访问提示
+            const today = new Date().toDateString();
+            const lastVisit = localStorage.getItem('lastVisitDate');
+            if (lastVisit !== today) {
+                localStorage.setItem('lastVisitDate', today);
+                setTimeout(() => showToast('💛 欢迎回来！今天也是爱她的一天~'), 1500);
+            }
+
+            console.log('💖 我们的甜蜜小窝');
+            console.log('💝 第一个520：2026年5月20日');
+            console.log('💡 图片请放在同目录下，命名为 图片1.jpg 至 图片'+IMAGE_COUNT+IMAGE_EXT);
+        })();
+    </script>
+</body>
+</html>
