@@ -293,6 +293,7 @@
             z-index: 1;
             min-height: 50px;
             transition: opacity 0.5s;
+            cursor: pointer;
         }
         .quote-author {
             font-size: 0.85rem;
@@ -486,8 +487,8 @@
 
         <div class="hero-card">
             <div class="hero-icon">💖</div>
-            <h1 class="hero-title"></h1>
-            <p class="hero-subtitle"></p>
+            <h1 class="hero-title">我们的甜蜜小窝</h1>
+            <p class="hero-subtitle">每一天都在更爱你一点点 ✨</p>
             <p class="hero-names">大笨蛋 & 戈畅</p>
         </div>
 
@@ -534,7 +535,7 @@
         </div>
 
         <div class="quote-card">
-            <p class="quote-text" id="quoteText">在这个世界上，我最喜欢的人就是你。</p>
+            <p class="quote-text" id="quoteText" style="cursor:pointer;" title="点击听我对你说💌">在这个世界上，我最喜欢的人就是你。</p>
             <p class="quote-author" id="quoteAuthor">—— 写给你的第 1 封情书</p>
             <div class="quote-nav">
                 <button class="quote-btn" id="prevQuote" title="上一句">◀</button>
@@ -567,9 +568,9 @@
             const ANNIVERSARY_DATE = '2026-04-10';
             const GIRL_NAME = '戈畅';
             const BOY_NAME = '大笨蛋';
-            // 图片数量（文件名为 图片1.jpg, 图片2.jpg ... 图片6.jpg）
             const IMAGE_COUNT = 6;
-            const IMAGE_EXT = '.jpg'; // 如果图片是png格式，改为 '.png'
+            const IMAGE_EXT = '.jpg';
+            const AUDIO_EXT = '.mp3';   // 音频文件扩展名，可按需修改
             // ==================================
 
             document.querySelector('.hero-names').textContent = ` ${BOY_NAME} & ${GIRL_NAME} `;
@@ -648,26 +649,28 @@
                 }
             }
             update520();
-            setInterval(update520, 60000); // 每分钟更新一次
+            setInterval(update520, 60000);
 
-            // 情话
+            // ============= 情话（已彻底删除自动翻页，仅手动切换 + 点击播放音频） =============
             const quotes = [
                 { text: '在这个世界上，我最喜欢的人就是你。', author: '—— 写给你的第 1 封情书' },
                 { text: '遇见你，是我这辈子最美丽的意外。', author: '—— 写给你的第 2 封情书' },
-                { text: '我想和你有个家', author: '—— 写给你的第 3 封情书' },
-                { text: '我想和你一起，看遍世间所有的日落。', author: '—— 写给你的第 4 封情书' },
-                { text: '没有什么特别的事，只是想你了。', author: '—— 写给你的第 5 封情书' },
-                { text: '你是我疲惫生活里最温柔的梦想。', author: '—— 写给你的第 6 封情书' },
-                { text: '有你在的每一天，都值得被珍藏。', author: '—— 写给你的第 7 封情书' },
-                { text: '我喜欢你，从一而终，认真且怂。', author: '—— 写给你的第 8 封情书' },
-                { text: '你是我的星辰大海，也是我的柴米油盐。', author: '—— 写给你的第 9 封情书' },
-                { text: '余生很长，只想和你一起慢慢走。', author: '—— 写给你的第 10 封情书' },
-                { text: '戈畅姐姐我这辈子跟定你了。', author: '—— 写给你的第 11 封情书' },
-                { text: '你是我所有温柔和偏爱的原因。', author: '—— 写给你的第 12 封情书' },
+                { text: '我想和你一起，看遍世间所有的日落。', author: '—— 写给你的第 3 封情书' },
+                { text: '没有什么特别的事，只是想你了。', author: '—— 写给你的第 4 封情书' },
+                { text: '你是我疲惫生活里最温柔的梦想。', author: '—— 写给你的第 5 封情书' },
+                { text: '有你在的每一天，都值得被珍藏。', author: '—— 写给你的第 6 封情书' },
+                { text: '我喜欢你，从一而终，认真且怂。', author: '—— 写给你的第 7 封情书' },
+                { text: '你是我的星辰大海，也是我的柴米油盐。', author: '—— 写给你的第 8 封情书' },
+                { text: '余生很长，只想和你一起慢慢走。', author: '—— 写给你的第 9 封情书' },
+                { text: '你是我所有温柔和偏爱的原因。', author: '—— 写给你的第 10 封情书' },
+                { text: '我爱你，戈畅。', author: '—— 写给你的第 11 封情书' },
+                
             ];
             let currentQuoteIndex = 0;
             const quoteText = document.getElementById('quoteText');
             const quoteAuthor = document.getElementById('quoteAuthor');
+            let currentAudio = null;
+
             function showQuote(index) {
                 if (index < 0) index = quotes.length - 1;
                 if (index >= quotes.length) index = 0;
@@ -678,12 +681,40 @@
                     quoteAuthor.textContent = quotes[index].author;
                     quoteText.style.opacity = '1';
                 }, 250);
+                // 切换时停止正在播放的音频
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio = null;
+                }
             }
+
+            // 播放当前情话对应的音频
+            function playQuoteAudio(index) {
+                if (currentAudio) {
+                    currentAudio.pause();
+                    currentAudio = null;
+                }
+                const audioFile = `音频${index + 1}${AUDIO_EXT}`;
+                try {
+                    currentAudio = new Audio(audioFile);
+                    currentAudio.play().catch(err => {
+                        console.log('音频播放失败：', err);
+                        showToast('🔇 没找到音频文件哦～');
+                    });
+                } catch (e) {
+                    console.log('创建音频失败：', e);
+                }
+            }
+
             document.getElementById('prevQuote').addEventListener('click', () => showQuote(currentQuoteIndex - 1));
             document.getElementById('nextQuote').addEventListener('click', () => showQuote(currentQuoteIndex + 1));
-            setInterval(() => showQuote(currentQuoteIndex + 1), 8000);
 
-            // 照片画廊 - 使用本地图片文件
+            // 点击情话文字播放音频
+            quoteText.addEventListener('click', () => {
+                playQuoteAudio(currentQuoteIndex);
+            });
+
+            // 照片画廊
             const galleryGrid = document.getElementById('galleryGrid');
             function buildGallery() {
                 galleryGrid.innerHTML = '';
@@ -695,7 +726,6 @@
                     img.alt = `我们的照片 ${i}`;
                     img.loading = 'lazy';
                     img.onerror = function() {
-                        // 如果图片加载失败，显示占位符
                         this.style.display = 'none';
                         div.innerHTML = `<div class="gallery-placeholder"><span class="icon">📷</span><span>图片${i}</span></div>`;
                     };
@@ -755,6 +785,7 @@
             console.log('💖 我们的甜蜜小窝');
             console.log('💝 第一个520：2026年5月20日');
             console.log('💡 图片请放在同目录下，命名为 图片1.jpg 至 图片'+IMAGE_COUNT+IMAGE_EXT);
+            console.log('🎵 音频请放在同目录下，命名为 音频1.mp3 至 音频12.mp3');
         })();
     </script>
 </body>
